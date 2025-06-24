@@ -1,17 +1,13 @@
 import { useState } from "react";
-import { auth, firestore } from "../config/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import useAuthStore from "../store/authStore";
+import useLogin from "../hooks/useLogin";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const setUser = useAuthStore((state) => state.setUser);
+
+  const { login, loading, error } = useLogin();
 
   const handleChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
