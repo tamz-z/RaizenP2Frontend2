@@ -9,7 +9,7 @@ const useSignUpWithEmailAndPassword = () => {
   // Status voor laadindicator en foutmeldingen
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // Functie om de gebruiker in de Zustand store te zetten
+  // Functie om de gebruiker in de store te zetten
   const setUser = useAuthStore((state) => state.setUser);
 
   // Functie om een nieuwe gebruiker aan te maken
@@ -29,7 +29,7 @@ const useSignUpWithEmailAndPassword = () => {
         createdAt: new Date(),
       });
 
-      // Sla gebruiker op in Zustand store
+      // Sla gebruiker op in  store
       setUser({
         uid: user.uid,
         email: user.email,

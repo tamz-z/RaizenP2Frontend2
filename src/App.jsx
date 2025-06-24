@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import PostList from "./components/PostList";
 import { supabase } from "./config/supabase";
 import { Navigate, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
-import AuthPage from "./pages/LoginPage/LoginPage";
-import PageLayout from "./Layouts/PageLayout/PageLayout";
-import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import HomePage from "./pages/HomePage";
+import AuthPage from "./pages/LoginPage";
+import PageLayout from "./Layouts/PageLayout";
+import ProfilePage from "./pages/ProfilePage";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "./firebase/firebase";
+import { auth } from "./config/firebase";
 
 function App() {
   // State voor posts in de feed
