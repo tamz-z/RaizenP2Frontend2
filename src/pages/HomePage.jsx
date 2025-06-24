@@ -6,11 +6,11 @@ const HomePage = () => {
     <div className="container mx-auto px-4 py-10 max-w-7xl">
       <div className="flex gap-10">
         <div className="flex-2">
-        h1 className="text-3xl font-bold mb-6">Home</h1>
-          <PostList />
+        <h1 className="text-3xl font-bold mb-6">Home blob</h1>
+          {/* <PostList /> */}
         </div>
         <div className="hidden lg:block flex-1 max-w-xs">
-          <SuggestedUsers />
+          {/* <SuggestedUsers /> */}
         </div>
       </div>
     </div>
