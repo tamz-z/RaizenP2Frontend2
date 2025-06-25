@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
-import useAuthStore from "../store/authStore";
 
-// Hook voor het afhandelen van het uitloggen van gebruikers
+// Hook voor het afhandelen van het uitloggen van gebruikers zonder zustand
 const useLogout = () => {
   // Status voor laadindicator en foutmeldingen
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // Functie om de gebruiker uit de Zustand store te verwijderen
-  const clearUser = useAuthStore((state) => state.clearUser);
 
   // Functie om uit te loggen
   const logout = async () => {
@@ -18,8 +15,8 @@ const useLogout = () => {
     try {
       // Probeer uit te loggen via Firebase Auth
       await signOut(auth);
-      // Verwijder gebruiker uit Zustand store
-      clearUser();
+      // Verwijder gebruiker uit localStorage
+      localStorage.removeItem("user-info");
     } catch (err) {
       setError(err); // Zet foutmelding bij mislukking
     } finally {

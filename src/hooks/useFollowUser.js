@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "../config/firebase";
-import useAuthStore from "../store/authStore";
-import useUserProfileStore from "../store/userProfileStore";
 
-const useFollowUser = (targetUserId) => {
-  const authUser = useAuthStore((state) => state.user);
-  const { userProfile, setUserProfile } = useUserProfileStore();
+// Hook voor volgen/ontvolgen zonder zustand
+// Parameters:
+// - targetUserId: id van de gebruiker die gevolgd/ontvolgd wordt
+// - authUser: ingelogde gebruiker object
+// - userProfile: profiel van target user
+// - setUserProfile: callback om userProfile te updaten
+const useFollowUser = (targetUserId, authUser, userProfile, setUserProfile) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -39,11 +41,13 @@ const useFollowUser = (targetUserId) => {
         await updateDoc(targetUserDocRef, {
           followers: arrayRemove(authUser.uid),
         });
-        // Update local userProfile store followers array
-        setUserProfile({
-          ...userProfile,
-          followers: userProfile.followers.filter((id) => id !== authUser.uid),
-        });
+        // Update local userProfile via callback
+        if (setUserProfile && userProfile) {
+          setUserProfile({
+            ...userProfile,
+            followers: userProfile.followers.filter((id) => id !== authUser.uid),
+          });
+        }
         setIsFollowing(false);
       } else {
         // Follow
@@ -53,11 +57,13 @@ const useFollowUser = (targetUserId) => {
         await updateDoc(targetUserDocRef, {
           followers: arrayUnion(authUser.uid),
         });
-        // Update local userProfile store followers array
-        setUserProfile({
-          ...userProfile,
-          followers: [...(userProfile.followers || []), authUser.uid],
-        });
+        // Update local userProfile via callback
+        if (setUserProfile && userProfile) {
+          setUserProfile({
+            ...userProfile,
+            followers: [...(userProfile.followers || []), authUser.uid],
+          });
+        }
         setIsFollowing(true);
       }
     } catch (error) {

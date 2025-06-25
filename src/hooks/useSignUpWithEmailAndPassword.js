@@ -2,15 +2,16 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, firestore } from "../config/firebase";
 import { doc, setDoc } from "firebase/firestore";
-import useAuthStore from "../store/authStore";
 
-// Hook voor het afhandelen van het aanmaken van een nieuwe gebruiker met email en wachtwoord
+// Hook voor het afhandelen van het aanmaken van een nieuwe gebruiker met email en wachtwoord zonder zustand
 const useSignUpWithEmailAndPassword = () => {
   // Status voor laadindicator en foutmeldingen
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // Functie om de gebruiker in de store te zetten
-  const setUser = useAuthStore((state) => state.setUser);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user-info");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   // Functie om een nieuwe gebruiker aan te maken
   const signUp = async ({ email, password, fullName }) => {
@@ -19,23 +20,25 @@ const useSignUpWithEmailAndPassword = () => {
     try {
       // Maak gebruiker aan via Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const newUser = userCredential.user;
 
       // Maak gebruikersdocument aan in Firestore
-      await setDoc(doc(firestore, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
+      await setDoc(doc(firestore, "users", newUser.uid), {
+        uid: newUser.uid,
+        email: newUser.email,
         fullName: fullName,
         createdAt: new Date(),
       });
 
-      // Sla gebruiker op in  store
-      setUser({
-        uid: user.uid,
-        email: user.email,
+      // Sla gebruiker lokaal op en in localStorage
+      const userData = {
+        uid: newUser.uid,
+        email: newUser.email,
         displayName: fullName,
-        photoURL: user.photoURL || null,
-      });
+        photoURL: newUser.photoURL || null,
+      };
+      setUser(userData);
+      localStorage.setItem("user-info", JSON.stringify(userData));
     } catch (err) {
       setError(err); // Zet foutmelding bij mislukking
     } finally {
@@ -44,7 +47,7 @@ const useSignUpWithEmailAndPassword = () => {
   };
 
   // Retourneer status en signup functie
-  return { loading, error, signUp };
+  return { loading, error, user, signUp };
 };
 
 export default useSignUpWithEmailAndPassword;

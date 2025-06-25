@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import useAuthStore from "../store/authStore";
 import useLogout from "../hooks/useLogout";
+import useLogin from "../hooks/useLogin";
 
 // Navbar component met navigatie en gebruikersinformatie
 const Navbar = () => {
-  // Haal huidige gebruiker op uit Zustand store
-  const user = useAuthStore((state) => state.user);
+  // Haal user state lokaal op via useLogin hook
+  const { user } = useLogin();
   // Haal logout functie en laadstatus op uit hook
   const { logout, loading } = useLogout();
   const navigate = useNavigate();

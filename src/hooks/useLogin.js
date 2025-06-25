@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebase";
-import useAuthStore from "../store/authStore";
 
-// Hook voor het afhandelen van het inloggen van gebruikers
+// Hook voor het afhandelen van het inloggen van gebruikers zonder zustand
 const useLogin = () => {
   // Status voor laadindicator en foutmeldingen
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  // Functie om de gebruiker in de Zustand store te zetten
-  const setUser = useAuthStore((state) => state.setUser);
+  const [user, setUser] = useState(() => {
+    // Probeer user uit localStorage te laden
+    const storedUser = localStorage.getItem("user-info");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   // Functie om in te loggen met email en wachtwoord
   const login = async ({ email, password }) => {
@@ -18,14 +20,16 @@ const useLogin = () => {
     try {
       // Probeer in te loggen via Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      // Sla de gebruiker op in de Zustand store
-      setUser({
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-      });
+      const loggedInUser = userCredential.user;
+      // Sla de gebruiker lokaal op en in localStorage
+      const userData = {
+        uid: loggedInUser.uid,
+        email: loggedInUser.email,
+        displayName: loggedInUser.displayName,
+        photoURL: loggedInUser.photoURL,
+      };
+      setUser(userData);
+      localStorage.setItem("user-info", JSON.stringify(userData));
     } catch (err) {
       setError(err); // Zet foutmelding bij mislukking
     } finally {
@@ -33,8 +37,14 @@ const useLogin = () => {
     }
   };
 
-  // Retourneer status en login functie
-  return { loading, error, login };
+  // Functie om uit te loggen
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user-info");
+  };
+
+  // Retourneer status, user en login functie
+  return { loading, error, user, login, logout };
 };
 
 export default useLogin;
