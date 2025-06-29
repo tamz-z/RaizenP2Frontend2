@@ -1,22 +1,38 @@
-import { doc, getDoc, addDoc } from "firebase/firestore";
-import { db } from "../../../RaizenP2Frontend2/src/config/firebase";
-const useUserProfileStore = addDoc((set) => ({
-  userProfile: null,
-  setUserProfile: (profile) => set({ userProfile: profile }),
-  fetchUserProfile: async (uid) => {
+import React, { useState, createContext, useContext } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+
+const UserProfileContext = createContext(null);
+
+export function UserProfileProvider({ children }) {
+  const [userProfile, setUserProfile] = useState(null);
+
+  const fetchUserProfile = async (uid) => {
     try {
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        set({ userProfile: docSnap.data() });
+        setUserProfile(docSnap.data());
       } else {
-        set({ userProfile: null });
+        setUserProfile(null);
       }
     } catch (error) {
       console.error("Error fetching user profile:", error);
-      set({ userProfile: null });
+      setUserProfile(null);
     }
-  },
-}));
+  };
 
-export default useUserProfileStore;
+  return React.createElement(
+    UserProfileContext.Provider,
+    { value: { userProfile, setUserProfile, fetchUserProfile } },
+    children
+  );
+}
+
+export function useUserProfile() {
+  const context = useContext(UserProfileContext);
+  if (!context) {
+    throw new Error("useUserProfile must be used within a UserProfileProvider");
+  }
+  return context;
+}

@@ -2,12 +2,7 @@ import { useState, useEffect } from "react";
 import { doc, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { db } from "../config/firebase";
 
-// Hook voor volgen/ontvolgen zonder zustand
-// Parameters:
-// - targetUserId: id van de gebruiker die gevolgd/ontvolgd wordt
-// - authUser: ingelogde gebruiker object
-// - userProfile: profiel van target user
-// - setUserProfile: callback om userProfile te updaten
+
 const useFollowUser = (targetUserId, authUser, userProfile, setUserProfile) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
