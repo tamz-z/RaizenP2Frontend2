@@ -7,10 +7,10 @@ const HomePage = () => {
       <div className="flex gap-10">
         <div className="flex-2">
         <h1 className="text-3xl font-bold mb-6">Home blob</h1>
-          {/* <PostList /> */}
+          <PostList /> 
         </div>
         <div className="hidden lg:block flex-1 max-w-xs">
-          {/* <SuggestedUsers /> */}
+          <SuggestedUsers /> 
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useLogin from "../hooks/useLogin";
 
+// Login component voor gebruikers om in te loggen met email en wachtwoord
 const Login = () => {
   const [inputs, setInputs] = useState({
     email: "",
@@ -9,14 +10,15 @@ const Login = () => {
 
   const { login, loading, error } = useLogin();
 
+  // Update inputvelden bij verandering
   const handleChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
+  // Verwerk formulier indien ingediend
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(inputs);
+    login(inputs); // Roep login functie aan uit hook
   };
 
   return (
@@ -33,7 +35,7 @@ const Login = () => {
       <input
         type="password"
         name="password"
-        placeholder="Password"
+        placeholder="Wachtwoord"
         className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={inputs.password}
         onChange={handleChange}
@@ -41,7 +43,7 @@ const Login = () => {
       />
       {error && (
         <div className="text-red-600 text-sm">
-          {error.message || "Failed to login. Please try again."}
+          {error.message || "Inloggen mislukt. Probeer het opnieuw."}
         </div>
       )}
       <button
@@ -49,7 +51,7 @@ const Login = () => {
         disabled={loading}
         className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
       >
-        {loading ? "Logging in..." : "Log in"}
+        {loading ? "Bezig met inloggen..." : "Inloggen"}
       </button>
     </form>
   );
