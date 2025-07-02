@@ -1,10 +1,10 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import Sidebar from "../../components/Sidebar.jsx";
-import Navbar from "../../components/Navbar.jsx";
+import Sidebar from "../components/Sidebar.jsx";
+import Navbar from "../components/Navbar.jsx";
 import { useLocation } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../config/firebase.js";
+import { auth } from "../config/firebase.js";
 
 // Layout containers
 const LayoutWrapper = styled.div`

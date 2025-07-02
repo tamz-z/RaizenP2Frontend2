@@ -1,29 +1,47 @@
-import create from "zustand";
+import { useState, useEffect, useCallback } from "react";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase";
 
-const useUserProfileStore = create((set) => ({
-  userProfile: null,
-  fetchUserProfile: async (uid) => {
+// Custom hook voor user profile ophalen en volgen
+const useUserProfile = (uid) => {
+  const [userProfile, setUserProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Ophalen van profiel (eenmalig)
+  const fetchUserProfile = useCallback(async () => {
+    if (!uid) return;
+    setLoading(true);
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      set({ userProfile: docSnap.data() });
+      setUserProfile(docSnap.data());
     } else {
-      set({ userProfile: null });
+      setUserProfile(null);
     }
-  },
-  subscribeToUserProfile: (uid) => {
-    const docRef = doc(db, "users", uid);
-    return onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        set({ userProfile: docSnap.data() });
-      } else {
-        set({ userProfile: null });
-      }
-    });
-  },
-  setUserProfile: (profile) => set({ userProfile: profile }),
-}));
+    setLoading(false);
+  }, [uid]);
 
-export default useUserProfileStore;
+  // Live volgen van profiel
+  useEffect(() => {
+    if (!uid) {
+      setUserProfile(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const docRef = doc(db, "users", uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setUserProfile(docSnap.data());
+      } else {
+        setUserProfile(null);
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, [uid]);
+
+  return { userProfile, setUserProfile, fetchUserProfile, loading };
+};
+
+export default useUserProfile;
