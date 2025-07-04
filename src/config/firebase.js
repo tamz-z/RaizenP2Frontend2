@@ -1,20 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  onSnapshot,
-  updateDoc,
-  deleteDoc,
-  doc,
-  deleteField,
-  getDoc,
-  arrayUnion,
-  query,
-  orderBy,
-} from "firebase/firestore";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, updateDoc, deleteDoc, doc, deleteField, getDoc, arrayUnion, query, orderBy,} from "firebase/firestore";
 
 import {
   getStorage,
@@ -43,7 +29,7 @@ const googleProvider = new GoogleAuthProvider();
 export {
   app,
   auth,
-  db,
+  db ,
   storage,
   googleProvider,
   collection,

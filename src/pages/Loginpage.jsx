@@ -2,7 +2,7 @@ import { useState } from "react";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 
-const Loginpage = () => {
+const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
@@ -23,4 +23,4 @@ const Loginpage = () => {
   );
 };
 
-export default Loginpage;
+export default LoginPage;
