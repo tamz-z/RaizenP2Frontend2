@@ -1,56 +1,33 @@
-import React, { useEffect, useState } from "react";
-import PostList from "./components/PostList";
-import { supabase } from "./config/supabase";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import PageLayout from "./Layouts/PageLayout";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import EditProfile from "./pages/EditProfile";
+import SearchPage from "./pages/SearchPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import AIPage from "./pages/AIPage";
 
-// Alleen de feed-logica en UI
+// Router en routes voor de app
 function App() {
-  const [posts, setPosts] = useState([]);
-
-  // Posts ophalen
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error) setPosts(data);
-  };
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  // Nieuwe post toevoegen
-  async function onAddPost(content, imageUrl) {
-    const { error } = await supabase
-      .from("posts")
-      .insert([{ content, image_url: imageUrl || null, username: "admin", likes: 0 }]);
-    if (!error) fetchPosts();
-  }
-
-  // Post liken
-  const onLike = async (postId) => {
-    const post = posts.find((p) => p.id === postId);
-    const newLikes = (post?.likes || 0) + 1;
-    const { error } = await supabase
-      .from("posts")
-      .update({ likes: newLikes })
-      .eq("id", postId);
-    if (!error) fetchPosts();
-  };
-
-  // Post verwijderen
-  const onDeletePost = async (postId) => {
-    const { error } = await supabase
-      .from("posts")
-      .delete()
-      .eq("id", postId);
-    if (!error) fetchPosts();
-  };
-
   return (
-    <div className="App">
-      <PostList posts={posts} onAddPost={onAddPost} onLike={onLike} onDeletePost={onDeletePost} />
-    </div>
+    <Router>
+      <PageLayout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/profile/:uid" element={<ProfilePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/ai" element={<AIPage />} />
+          <Route path="/*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PageLayout>
+    </Router>
   );
 }
 

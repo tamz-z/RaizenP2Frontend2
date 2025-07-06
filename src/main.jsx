@@ -1,27 +1,14 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import App from "./App";
-import LoginPage from "./pages/LoginPage";
-import ProfilePage from "./pages/ProfilePage";
-import EditProfile from "./pages/EditProfile";
-import SearchPage from "./pages/SearchPage";
-import SettingsPage from "./pages/SettingsPage";
-import NotificationsPage from "./pages/NotificationsPage";
+import React from "react";
+import App from "./App.jsx";
 
+// Startpunt van de React applicatie
+// Render de App component in het HTML element met id 'root'
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/profile/:uid" element={<ProfilePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <App />
   </React.StrictMode>
 );
+
+// Exporteer App als default export (optioneel, kan gebruikt worden in tests)
+export default App;

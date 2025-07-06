@@ -4,6 +4,7 @@ import useUserProfileStore from "../store/userProfileStore";
 import useAuthStore from "../store/authStore";
 import useFollowUser from "../hooks/useFollowUser";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/authStore";
 
 const ProfileHeader = ({ uid }) => {
   // Custom hook voor profiel data en acties

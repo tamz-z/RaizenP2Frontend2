@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { auth, firestore } from "../config/firebase";
+import { auth, db } from "../config/firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
-import useAuthStore from "../store/authStore";
+import { useAuth } from "../store/authStore";
 
 const Signup = () => {
   const [inputs, setInputs] = useState({
@@ -13,7 +13,7 @@ const Signup = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const setUser = useAuthStore((state) => state.setUser);
+  const { setUser } = useAuth();
 
   // Update inputvelden bij verandering
   const handleChange = (e) => {
@@ -32,7 +32,7 @@ const Signup = () => {
 
     try {
       // Controleren of gebruikersnaam al bestaat
-      const usersRef = collection(firestore, "users");
+      const usersRef = collection(db, "users");
       const q = query(usersRef, where("username", "==", inputs.username));
       const querySnapshot = await getDocs(q);
 
@@ -59,7 +59,7 @@ const Signup = () => {
           posts: [],
           createdAt: Date.now(),
         };
-        await setDoc(doc(firestore, "users", newUser.user.uid), userDoc);
+        await setDoc(doc(db, "users", newUser.user.uid), userDoc);
         setUser(userDoc);
       }
     } catch (err) {
@@ -80,8 +80,8 @@ const Signup = () => {
       const user = result.user;
 
       // Controleren of gebruiker al in Firestore staat
-      const userDocRef = doc(firestore, "users", user.uid);
-      const userDocSnap = await getDocs(query(collection(firestore, "users"), where("uid", "==", user.uid)));
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
 
       if (userDocSnap.empty) {
         // Nieuwe gebruiker toevoegen aan Firestore
