@@ -1,17 +1,76 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import styled from "styled-components";
 import useLogout from "../hooks/useLogout";
 import useLogin from "../hooks/useLogin";
 
-// Navbar component met navigatie en gebruikersinformatie
+const Nav = styled.nav`
+  background-color: white;
+  border-bottom: 1px solid #d1d5db; /* Tailwind gray-300 */
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const LogoLink = styled(Link)`
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937; /* Tailwind gray-800 */
+  text-decoration: none;
+`;
+
+const UserSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const UserName = styled.span`
+  display: none;
+  color: #374151; /* Tailwind gray-700 */
+  @media (min-width: 640px) {
+    display: inline;
+  }
+`;
+
+const UserImage = styled.img`
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  object-fit: cover;
+`;
+
+const LogoutButton = styled.button`
+  background-color: #dc2626; /* Tailwind red-600 */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  &:hover:enabled {
+    background-color: #b91c1c; /* Tailwind red-700 */
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const AuthLink = styled(Link)`
+  color: #2563eb; /* Tailwind blue-600 */
+  text-decoration: none;
+  margin-left: 1rem;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const Navbar = () => {
-  // Haal user state lokaal op via useLogin hook
   const { user } = useLogin();
-  // Haal logout functie en laadstatus op uit hook
   const { logout, loading } = useLogout();
   const navigate = useNavigate();
 
-  // Redirect naar login pagina als gebruiker niet ingelogd is
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -19,45 +78,25 @@ const Navbar = () => {
   }, [user, navigate]);
 
   return (
-    <nav className="bg-white border-b border-gray-300 px-4 py-3 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-bold text-gray-800">
-        Raizen
-      </Link>
-      <div className="flex items-center gap-4">
+    <Nav>
+      <LogoLink to="/">Raizen</LogoLink>
+      <UserSection>
         {user ? (
           <>
-            <img
-              src={user.photoURL || "/profilepic.png"}
-              alt={user.displayName || "User"}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <span className="hidden sm:inline text-gray-700">{user.displayName || user.email}</span>
-            <button
-              onClick={logout}
-              disabled={loading}
-              className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 disabled:opacity-50"
-            >
+            <UserImage src={user.photoURL || "/profilepic.png"} alt={user.displayName || "User"} />
+            <UserName>{user.displayName || user.email}</UserName>
+            <LogoutButton onClick={logout} disabled={loading}>
               Uitloggen
-            </button>
+            </LogoutButton>
           </>
         ) : (
           <>
-            <Link
-              to="/login"
-              className="text-blue-600 hover:underline"
-            >
-              Inloggen
-            </Link>
-            <Link
-              to="/signup"
-              className="text-blue-600 hover:underline"
-            >
-              Registreren
-            </Link>
+            <AuthLink to="/login">Inloggen</AuthLink>
+            <AuthLink to="/signup">Registreren</AuthLink>
           </>
         )}
-      </div>
-    </nav>
+      </UserSection>
+    </Nav>
   );
 };
 

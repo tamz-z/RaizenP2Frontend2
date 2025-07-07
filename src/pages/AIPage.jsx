@@ -47,8 +47,8 @@ const AIPage = () => {
       <div className="blob"></div>
       <div className="glass w-full max-w-2xl h-[90vh] mx-auto my-10 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
         <header className="px-8 py-6 bg-gradient-to-r from-blue-700 to-blue-500">
-          <h1 className="text-4xl font-extrabold leading-tight tracking-wider">ECHO</h1>
-          <p className="uppercase tracking-widest text-blue-200 text-sm">Your Safe Place</p>
+          <h1 className="text-4xl font-extrabold leading-tight tracking-wider">Raizen</h1>
+          <p className="uppercase tracking-widest text-blue-200 text-sm">get youre info</p>
         </header>
 
         <main

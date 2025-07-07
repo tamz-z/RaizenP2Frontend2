@@ -1,12 +1,47 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import PostList from "../components/PostList";
 import SuggestedUsers from "../components/SuggestedUsers";
 import { supabase } from "../config/supabase";
 
+const Container = styled.div`
+  max-width: 112rem; /* max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  gap: 2.5rem;
+`;
+
+const MainSection = styled.div`
+  flex: 2;
+`;
+
+const SidebarSection = styled.div`
+  display: none;
+  max-width: 20rem; /* max-w-xs */
+  flex: 1;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+`;
+
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
 
-  // Posts ophalen
   const fetchPosts = async () => {
     const { data, error } = await supabase
       .from("posts")
@@ -19,7 +54,6 @@ const HomePage = () => {
     fetchPosts();
   }, []);
 
-  // Nieuwe post toevoegen
   async function onAddPost(content, imageUrl) {
     const { error } = await supabase
       .from("posts")
@@ -27,7 +61,6 @@ const HomePage = () => {
     if (!error) fetchPosts();
   }
 
-  // Post liken
   const onLike = async (postId) => {
     const post = posts.find((p) => p.id === postId);
     const newLikes = (post?.likes || 0) + 1;
@@ -38,7 +71,6 @@ const HomePage = () => {
     if (!error) fetchPosts();
   };
 
-  // Post verwijderen
   const onDeletePost = async (postId) => {
     const { error } = await supabase
       .from("posts")
@@ -48,17 +80,17 @@ const HomePage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-10 max-w-7xl">
-      <div className="flex gap-10">
-        <div className="flex-2">
-          <h1 className="text-3xl font-bold mb-6">Home blob</h1>
+    <Container>
+      <Flex>
+        <MainSection>
+          <Title>Home blob</Title>
           <PostList posts={posts} onAddPost={onAddPost} onLike={onLike} onDeletePost={onDeletePost} />
-        </div>
-        <div className="hidden lg:block flex-1 max-w-xs">
+        </MainSection>
+        <SidebarSection>
           <SuggestedUsers />
-        </div>
-      </div>
-    </div>
+        </SidebarSection>
+      </Flex>
+    </Container>
   );
 };
 
