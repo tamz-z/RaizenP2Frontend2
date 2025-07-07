@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import PropTypes from "prop-types";
 import useUserProfileStore from "../store/userProfileStore";
-import useAuthStore from "../store/authStore";
 import useFollowUser from "../hooks/useFollowUser";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/authStore";
@@ -10,7 +9,7 @@ const ProfileHeader = ({ uid }) => {
   // Custom hook voor profiel data en acties
   const { userProfile, fetchUserProfile } = useUserProfileStore();
   // Authenticated gebruiker uit store
-  const authUser = useAuthStore((state) => state.user);
+  const authUser = useAuth((state) => state.user);
   // Hook voor volgen/ontvolgen functionaliteit
   const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(uid);
   // React Router navigate functie voor SPA navigatie

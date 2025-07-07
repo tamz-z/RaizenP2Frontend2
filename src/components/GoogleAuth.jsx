@@ -1,66 +1,87 @@
+import { useEffect } from "react";
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { auth, firestore, googleProvider } from "../config/firebase";
-import { signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import useAuthStore from "../store/authStore";
+import useUserProfileStore from "../store/userProfileStore";
+import { useAuth } from "../store/authStore";
+import useFollowUser from "../hooks/useFollowUser";
+import { useNavigate } from "react-router-dom";
 
-const GoogleAuth = ({ prefix }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const setUser = useAuthStore((state) => state.setUser);
+const ProfileHeader = ({ uid }) => {
+  // Custom hook voor profiel data en acties
+  const { userProfile, fetchUserProfile } = useUserProfileStore();
+  // Authenticated gebruiker uit store
+  const { user: authUser } = useAuth();
+  // Hook voor volgen/ontvolgen functionaliteit
+  const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(uid);
+  // React Router navigate functie voor SPA navigatie
+  const navigate = useNavigate();
 
-  const handleGoogleAuth = async () => {
-    setError(null);
-    setLoading(true);
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const userRef = doc(firestore, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (userSnap.exists()) {
-        // login
-        const userDoc = userSnap.data();
-        setUser(userDoc);
-      } else {
-        // signup
-        const userDoc = {
-          uid: user.uid,
-          email: user.email,
-          username: user.email.split("@")[0],
-          fullName: user.displayName || "",
-          bio: "",
-          profilePicURL: user.photoURL || "",
-          followers: [],
-          following: [],
-          posts: [],
-          createdAt: Date.now(),
-        };
-        await setDoc(doc(firestore, "users", user.uid), userDoc);
-        setUser(userDoc);
-      }
-    } catch (err) {
-      setError(err.message);
+  // Profiel data ophalen bij uid wijziging
+  useEffect(() => {
+    if (uid) {
+      fetchUserProfile(uid);
     }
-    setLoading(false);
-  };
+  }, [uid, fetchUserProfile]);
+
+  if (!userProfile) {
+    return <div>Profiel wordt geladen...</div>;
+  }
+
+  // Controleren of bezoeker eigen profiel bekijkt
+  const visitingOwnProfile = authUser && authUser.uid === uid;
+  // Controleren of bezoeker andermans profiel bekijkt
+  const visitingAnotherProfile = authUser && authUser.uid !== uid;
 
   return (
-    <button
-      onClick={handleGoogleAuth}
-      disabled={loading}
-      className="flex items-center justify-center gap-2 border border-gray-400 rounded px-3 py-2 text-sm hover:bg-gray-100 disabled:opacity-50"
-    >
-      <img src="/google.png" alt="Google logo" className="w-5 h-5" />
-      <span className="text-blue-600">{loading ? "Processing..." : `${prefix} with Google`}</span>
-      {error && <div className="text-red-600 text-xs mt-1">{error}</div>}
-    </button>
+    <div className="flex flex-col items-center p-6 border-b border-gray-300">
+      {/* Profielfoto */}
+      <img
+        src={userProfile.profilePic || "/default-profile.png"}
+        alt={userProfile.fullName}
+        className="w-24 h-24 rounded-full object-cover mb-4"
+      />
+      {/* Volledige naam */}
+      <h1 className="text-2xl font-bold">{userProfile.fullName}</h1>
+      {/* Bio */}
+      <p className="text-gray-600 mb-2">{userProfile.bio}</p>
+      {/* Volgers en volgend aantal */}
+      <div className="flex gap-6 mb-4">
+        <div>
+          <span className="font-bold">{userProfile.followers?.length || 0}</span> Volgers
+        </div>
+        <div>
+          <span className="font-bold">{userProfile.following?.length || 0}</span> Volgend
+        </div>
+      </div>
+      {/* Knop om eigen profiel te bewerken */}
+      {visitingOwnProfile && (
+        <button
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => {
+            // SPA navigatie naar bewerk profiel pagina
+            navigate("/edit-profile");
+          }}
+        >
+          Profiel bewerken
+        </button>
+      )}
+      {/* Knop om gebruiker te volgen/ontvolgen */}
+      {visitingAnotherProfile && (
+        <button
+          className={`px-4 py-2 rounded text-white ${
+            isFollowing ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
+          }`}
+          onClick={handleFollowUser}
+          disabled={isUpdating}
+        >
+          {isFollowing ? "Ontvolgen" : "Volgen"}
+        </button>
+      )}
+    </div>
   );
 };
 
-GoogleAuth.propTypes = {
-  prefix: PropTypes.string.isRequired,
+ProfileHeader.propTypes = {
+  uid: PropTypes.string.isRequired,
 };
 
-export default GoogleAuth;
+export default ProfileHeader;

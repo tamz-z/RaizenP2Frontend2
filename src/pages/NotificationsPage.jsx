@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase";
-import useAuthStore from "../store/authStore";
+import { useAuth } from "../store/authStore";
 
 const NotificationsPage = () => {
-  const authUser = useAuthStore((state) => state.user);
+  const { user: authUser } = useAuth();
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {

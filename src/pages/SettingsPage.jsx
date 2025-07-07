@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import PrivacyToggle from "../components/PrivacyToggle";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
-import useAuthStore from "../store/authStore";
+import { useAuth } from "../store/authStore";
 
 const SettingsPage = () => {
-  const authUser = useAuthStore((state) => state.user);
+  const { user: authUser } = useAuth();
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 

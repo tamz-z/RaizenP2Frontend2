@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../config/firebase";
-import useAuthStore from "../store/authStore";
+import { useAuth } from "../store/authStore";
 import useUserProfileStore from "../store/userProfileStore";
 
 const EditProfile = () => {
-  const authUser = useAuthStore((state) => state.user);
+const { user: authUser } = useAuth();
   const { userProfile, setUserProfile } = useUserProfileStore();
   const [fullName, setFullName] = useState("");
   const [bio, setBio] = useState("");

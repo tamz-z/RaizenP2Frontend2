@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase";
-import useAuthStore from "../store/authStore";
+import { useAuth } from "../store/authStore";
 
 const usePrivacySettings = () => {
-  const authUser = useAuthStore((state) => state.user);
+  const { user: authUser } = useAuth();
   const [isPrivate, setIsPrivate] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
